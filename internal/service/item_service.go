@@ -9,6 +9,7 @@ import (
 )
 
 var ErrInvalidInput = errors.New("invalid item input")
+var ErrSKUAlreadyExists = errors.New("sku already exists")
 
 type ItemService struct{ repo repository.Repository }
 
@@ -18,7 +19,17 @@ func (s *ItemService) CreateItem(ctx context.Context, sku, name string, quantity
 	if sku == "" || name == "" || quantity < 0 {
 		return model.Item{}, ErrInvalidInput
 	}
-	return s.repo.CreateItem(ctx, sku, name, quantity)
+
+	_, err := s.repo.GetItemBySKU(ctx, sku)
+	if errors.Is(err, model.ErrNotFound) {
+		return s.repo.CreateItem(ctx, sku, name, quantity)
+	}
+
+	if err != nil {
+		return model.Item{}, err
+	}
+
+	return model.Item{}, ErrSKUAlreadyExists
 }
 
 func (s *ItemService) ListItems(ctx context.Context) ([]model.Item, error) {

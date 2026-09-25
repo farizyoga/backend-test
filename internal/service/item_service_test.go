@@ -18,6 +18,9 @@ func (*fakeRepository) GetItem(context.Context, int64) (model.Item, error) { ret
 func (*fakeRepository) AdjustStock(context.Context, int64, int64) (model.Item, error) {
 	return model.Item{}, nil
 }
+func (*fakeRepository) GetItemBySKU(context.Context, string) (model.Item, error) {
+	return model.Item{}, nil
+}
 
 func TestCreateItemUsesInjectedRepository(t *testing.T) {
 	repo := &fakeRepository{}
