@@ -19,7 +19,7 @@ func (*fakeRepository) AdjustStock(context.Context, int64, int64) (model.Item, e
 	return model.Item{}, nil
 }
 func (*fakeRepository) GetItemBySKU(context.Context, string) (model.Item, error) {
-	return model.Item{}, nil
+	return model.Item{}, model.ErrNotFound
 }
 
 func TestCreateItemUsesInjectedRepository(t *testing.T) {
