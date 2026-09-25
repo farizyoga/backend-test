@@ -50,9 +50,14 @@ func (h *Handler) createItem(w http.ResponseWriter, r *http.Request) {
 	if !decodeJSON(w, r, &req) {
 		return
 	}
+
 	created, err := h.service.CreateItem(r.Context(), req.SKU, req.Name, req.Quantity)
 	if errors.Is(err, service.ErrInvalidInput) {
 		writeError(w, http.StatusBadRequest, "sku and name are required; quantity must be non-negative")
+		return
+	}
+	if errors.Is(err, service.ErrSKUAlreadyExists) {
+		writeError(w, http.StatusBadRequest, "sku already exists")
 		return
 	}
 	if err != nil {
